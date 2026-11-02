@@ -187,9 +187,9 @@ namespace KingshotCalculator
         {
             var multipliers = new Dictionary<string, double>();
 
-            void UpdateMultiplier(string key, bool hasPercentChance, int percentChance, int value)
+            void UpdateMultiplier(string key, bool hasPercentChance, double percentChance, int value)
             {
-                var result = hasPercentChance ? (double)percentChance / 100 * value : value;
+                var result = hasPercentChance ? percentChance / 100 * value : value;
                 multipliers[key] = multipliers.GetValueOrDefault(key) + result;
             }
 
@@ -229,7 +229,8 @@ namespace KingshotCalculator
         {
             // remove amadeus since his joiner skill is the same as chenko
             // remove margot since his joiner skill is the same as amane
-            Alcar, Rosa, Petra, /*Amadeus,*/ /*Margot,*/ Chenko, Amane, Saul, Hilde, Eric, Fahd
+            // remove rosa from joiner list, it's unclear if her skill is multiplicative. Frakinator at least doesn't let you calculate with her
+            Alcar, /*Rosa,*/ Petra, /*Amadeus,*/ /*Margot,*/ Chenko, Amane, Saul, Hilde, Eric, Fahd
         };
 
         public static Hero Alcar { get; private set; } = new Hero
@@ -245,8 +246,10 @@ namespace KingshotCalculator
             },
             Skill3 = new HeroSkill
             {
-                EnemyDamageTakenUp = 25,
-                DamageUp = 60 * (60/100) // 60 for infantry. Weight it by expected troop ratio(60/40)
+                // the skill absolutely sucks because it only triggers for a single round out of > 15 rounds usually. 
+                // Commented because it messes up calculations for other skills
+                //EnemyDamageTakenUp = 25,
+                //DamageUp = 60 * (60/100) // 60 for infantry. Weight it by expected troop ratio(60/40)
             }
         };
 
@@ -275,7 +278,7 @@ namespace KingshotCalculator
             Skill1 = new HeroSkill
             {
                 HasPercentChance = true,
-                PercentChance = 50,
+                PercentChance = 87.5,
                 EnemyDamageTakenUp = 50
             },
             Skill2 = new HeroSkill
@@ -440,7 +443,7 @@ namespace KingshotCalculator
     public class HeroSkill
     {
         public bool HasPercentChance { get; set; }
-        public int PercentChance { get; set; }
+        public double PercentChance { get; set; }
 
         public int AttackUp { get; set; }
         public int DamageTakenDown { get; set; }
